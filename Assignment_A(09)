@@ -1,0 +1,79 @@
+/* A-09: Write a program to implement MySQL/Oracle database connectivity with any 
+front end language to implement Database navigation operations (add, delete, edit etc.)*/
+
+
+
+steps for completion of database connectivity in ubantu operating system
+1] Open command prompt then 
+2] command for installing mysql in system
+ >pip install mysql-connector
+ 
+3] command for mysql call in the system
+> sudo mysql -u root -p
+
+-- create the database 
+CREATE DATABASE college;
+
+-- Command for call the database
+USE college;
+
+-- creation of the table
+CREATE TABLE student(
+  Name varchar(20),
+  Roll_no int,
+  Marks int(3)
+);
+
+-- Write the python code in text file for connectivity 
+import mysql.connector
+mydb=mysql.connector.connect(
+host="localhost",
+user="root",
+password="------",  -- import here user system's password
+database="college"
+)
+mycursor=mydb.cursor()
+
+-- insertion operations
+sql="INSERT INTO student(Name,Roll_no,Marks) VALUES ('Ram',22,76)"
+mycursor.execute(sql)  
+-- call the variable with help of above command
+
+-- here sql is the variable for first insertion operation
+
+-- insert one by one by making the comment of other insertion command i.e run one command at one time
+
+l="INSERT INTO student(Name,Roll_no,Marks) VALUES ('Sham',43,98)"
+mycursor.execute(l)
+m="INSERT INTO student(Name,Roll_no,Marks) VALUES ('Kiran',14,87)"
+mycursor.execute(m)
+n="INSERT INTO student(Name,Roll_no,Marks) VALUES ('Bob',7,45)"
+mycursor.execute(n)
+o="INSERT INTO student(Name,Roll_no,Marks) VALUES ('Donald',54,67)"
+mycursor.execute(o)
+
+
+-- Update operation
+p="UPDATE student SET Name='vidya',Marks=87 WHERE Roll_no=43"
+mycursor.execute(p)
+
+-- Delete operation
+q="DELETE FROM student where Marks>=45"
+mycursor.execute(q)
+
+mydb.commit()
+print(mycursor.rowcount,"Record updated.")
+
+-- Run the python file in promt with help of >python3 file_name.py
+/*If afterall there is issue in running then open the new tab in terminal and follow follwing sequence of commands
+>sudo mysql -u root -p
+
+>USE mysql
+
+>UPDATE user SET pulgin='mysql_native_password' WHERE user='root';
+>exit;
+
+>service mysql restart
+>exit
+
+and in promt run the python file i.e python3 file_name.py*/w

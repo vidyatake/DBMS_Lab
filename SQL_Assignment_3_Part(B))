@@ -1,0 +1,79 @@
+create database Company_info;
+use Company_info;
+
+create table Companies (
+comp_id varchar(4),
+ name varchar(20),
+ cost integer,
+ year integer(4)
+ );
+insert into Companies(comp_id,name,cost,year) 
+values
+('C001','ONGC', 2000 ,2010),
+('C002','HPCL' ,2500 ,2012),
+('C005','IOCL', 1000,2014),
+('C006', 'BHEL' ,3000,2015 );
+
+create table Orders (
+comp_id varchar(4),
+ domain varchar(7),
+ quantity integer);
+ 
+ insert into Orders (comp_id, domain, quantity)
+ values
+ ('C001', 'Oil', 109),
+ ('C002',' Gas', 121),
+ ('C005', 'Telecom', 115);
+ 
+/* Create above tables with appropriate constraints execute the following query:
+1. Find names, costs, domains and quantities for companies using inner join.*/
+
+select name,cost,domain,quantity from Companies
+inner join Orders
+on Companies.comp_id=Orders.comp_id;
+
+-- 2. Find names, costs, domains and quantities for companies using left outer join.
+select name,cost,domain,quantity from Companies
+left join Orders
+on Companies.comp_id=Orders.comp_id;
+
+-- 3. Find names, costs, domains and quantities for companies using right outer join.
+select name,cost,domain,quantity from Companies 
+right join Orders
+on Companies.comp_id=Orders.comp_id;
+
+-- 4. Find names, costs, domains and quantities for companies using Union operator.
+select * from Companies as C
+left join Orders as O
+on C.comp_id=O.comp_id
+union
+select * from Orders as O 
+right join Companies as C
+on C.comp_id=O.comp_id;
+
+-- 5. Create View View1 by selecting both tables to show company name and quantities.
+create view view1 as
+select name
+from Companies
+union
+select quantity
+from Orders;
+
+/*6. Create View2 on comapnies table by selecting any two columns and perform insert 
+update delete operations*/
+create view view2 as
+select name,year
+from Companies;
+
+insert into view2(name,year) values('ABCD',2014);
+
+set sql_safe_updates=0;
+update view2 set name='TCS' where year=2014;
+
+delete from view2 where name='C001';
+
+-- 7. Display content of View1, View2.
+
+select *from view1;
+select *from view2;
+

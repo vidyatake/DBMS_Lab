@@ -1,0 +1,406 @@
+-- NAME : VIDYA SUNIL TAKE
+
+/*Consider following relation and solve the queries: Create different tables given below with 
+appropriate constraints like primary key, foreign key, check constrains, not null etc. 
+Account (Acc_no, branch_name,balance)
+Branch (branch_name,branch_city,assets)
+Customer (cust_name,cust_street,cust_city)
+Depositor (cust_name,acc_no)
+Loan (loan_no,branch_name,amount)
+Borrower (cust_name,loan_no)*/
+
+
+-- Firstly you have to create database for further operations
+Create Database Bank;
+
+-- Command use for database call
+use Bank;
+
+
+
+-- Create the table name as Bank
+create table Branch(BName varchar(20) primary key,BCity varchar(20),Assets integer);
+
+-- Insert the values in Bank table with help of multiline inserting
+insert into Branch(BName, BCity, Assets) VALUES ('AKURDI','NIGDI',150000),
+('CAMP','PUNE',1000000),
+('KHADKI','PUNE',155000),
+('NAVI MUMBAI','MUMBAI',105000),
+('SANTA CRUZ','MUMBAI',105000),
+('STATION','PUNE',155000);
+
+
+
+-- Create the table name as Account
+CREATE TABLE Account(Account_no integer primary key,BName varchar(20),Balance integer, FOREIGN KEY (BName) REFERENCES Branch(BName));
+
+-- Insert the values in Account table with help of multiline inserting
+insert into Account(Account_no, BName, Balance) VALUES (1001,'CAMP',60000),
+(1002,'STATION',100000),
+(1003,'STATION',130000),
+(1004,'KHADKI',10000),
+(2001,'AKURDI',50000),
+(2002,'AKURDI',150000),
+(2003,'AKURDI',12000),
+(2004,'AKURDI',50000),
+(3001,'NAVI MUMBAI',60000),
+(3002,'SANTA CRUZ',16000),
+(3003,'NAVI MUMBAI',10000),
+(3004,'NAVI MUMBAI',12000);
+
+
+
+-- Create the table name as Customer
+create table Customer(CName varchar(20) primary key,CStreet varchar(20), CCity varchar(20));
+
+-- Insert the values in Customer table with help of multiline inserting
+insert into Customer(CName,CStreet,CCity) Values ('ADESH PARDESHI', 'CAMP', 'PUNE'), 
+('ANKITA KAMBLI', 'PIMPRI', 'PIMPRI'), 
+('APOORV SHAH', 'VASAI ROAD', 'MUMBAI'),
+ ('DHIREN JAIN', 'AKURDI', 'NIGDI'), 
+ ('NIDA SHAIKH', 'SANTA CRUZ', 'MUMBAI'), 
+ ('PRIYANKA LOKHANDE', 'BORIWALI(E)', 'MUMBAI'), 
+ ('RIDDHI RUNWAL', 'AKURDI', 'NIGDI'), 
+ ('RIDDHI SANGHVI', 'WAKDEWADI', 'PUNE'), 
+ ('SHARVARI KULKARNI', 'VIMAN-NAGAR', 'PUNE'), 
+ ('SHIKHA JAISWAL', 'ABC CHOWK', 'PUNE'),
+ ('SOHAM BHOJ', 'AKURDI', 'NIGDI'), 
+ ('YOJNA GADIYA', 'BORIWALI(W)', 'MUMBAI');
+ 
+ 
+ -- Create the table name as Depositer
+ create table Depositor
+ (CName varchar(20) primary key,
+ Account_no integer,
+ Foreign key(CName) References Customer(CName),
+ Foreign key(Account_no) References Account(Account_no));
+ 
+ -- Insert the values in Depositer table with help of multiline inserting
+ insert into Depositor(CName,Account_no) Values ('ADESH PARDESHI', 1001), 
+ ('RIDDHI SANGHVI', 1002),
+ ('SHARVARI KULKARNI', 1003),
+ ('SHIKHA JAISWAL', 1004),
+ ('ANKITA KAMBLI', 2001), 
+ ('DHIREN JAIN', 2002), 
+ ('RIDDHI RUNWAL', 2003), 
+ ('SOHAM BHOJ', 2004), 
+ ('APOORV SHAH', 3001),
+ ('NIDA SHAIKH', 3002),
+ ('PRIYANKA LOKHANDE', 3003),
+ ('YOJNA GADIYA', 3004);
+ 
+ -- Create the table name as Loan
+ create table Loan
+ (Loan_no integer primary key,
+ BName varchar(20),
+ Amount integer, 
+ Foreign key(BName) references Branch(BName));
+ 
+  -- Insert the values in Loan table with help of multiline inserting
+ insert into Loan
+ (Loan_no,BName,Amount)
+ Values 
+ (101, 'CAMP', 15000),
+ (102, 'STATION', 100000), 
+ (103, 'KHADKI', 10000), 
+ (201, 'AKURDI', 12000),
+ (202, 'AKURDI', 50000), 
+ (301, 'NAVI MUMBAI', 20000), 
+ (302, 'SANTA CRUZ', 20000),
+ (303, 'SANTA CRUZ', 60000),
+ (304, 'NAVI MUMBAI', 60000);
+ 
+ 
+  -- Create the table name as Borrower
+ create table Borrower
+ (CName varchar(20) primary key,
+ Loan_no integer,
+ Foreign Key(CName) references Customer(CName),
+ Foreign key(Loan_no) References Loan(Loan_no));
+ 
+  -- Insert the values in Borrower table with help of multiline inserting
+ insert into Borrower
+ (CName,Loan_no) 
+ Values
+ ('ADESH PARDESHI', 101), 
+ ('RIDDHI SANGHVI', 102), 
+ ('SHARVARI KULKARNI', 103), 
+ ('ANKITA KAMBLI', 201), 
+ ('RIDDHI RUNWAL', 202),
+ ('APOORV SHAH', 301), 
+ ('NIDA SHAIKH', 302),
+ ('PRIYANKA LOKHANDE', 303), 
+ ('YOJNA GADIYA', 304);
+ 
+ 
+-- 1. Find the names of all branches in loan relation
+ select distinct Bname from Loan;
+ 
+ -- 2. Find all loan numbers for loans made at Akurdi Branch with loan amount > 12000.
+ select Loan_no from Loan where Bname='AKURDI' and Amount>12000;
+ 
+--  3. Find all customers who have a loan from bank. Find their names,loan_no and loan amount
+ select Borrower.Cname,Loan.Loan_no,Loan.Amount from Loan inner join Borrower on
+Loan.Loan_no=Borrower.Loan_no;
+
+-- 4. List all customers in alphabetical order who have loan from Akurdi branch.
+ select * from Loan where Bname='AKURDI' order by Bname;
+
+--  5. Find all customers who have an account or loan or both at bank.
+ select Depositor.CName as "Customer having account or loan or both at bank" from
+Depositor right join Borrower on Depositor.CName=Borrower.CName
+union
+select Depositor.CName from Depositor left join Borrower on
+Depositor.CName=Borrower.CName;
+
+-- 6. Find all customers who have both account and loan at bank.
+select Depositor.CName as "Customers having both loan and account" from
+Depositor inner join Borrower
+ON Depositor.CName=Borrower.CName;
+
+-- 7. Find all customers who have account but no loan at the bank.
+select CName from Depositor where CName not in (select CName from Borrower);
+
+-- 8. Find the average account balance at each branch
+select avg(Balance) as "Amount",Bname from Account group by Bname;
+
+-- 9. Find no. of depositors at each branch
+select count(Bname),Bname from Depositor inner join Account on
+Depositor.Account_no=Account.Account_no group by Bname;
+
+-- 10. Find name of Customer and city where customer name starts with Letter P.
+select Cname,CCity from Customer where Cname like "P%";
+
+-- 11. Display distinct cities of branch.
+select Customer.Cname from Customer inner join Borrower on
+Customer.Cname=Borrower.Cname;
+
+-- 12. Find the branches where average account balance > 12000
+select Account.Bname from Account where Balance>(select avg(Balance)from Account);
+
+-- 13. Find number of tuples in customer relation
+select count(*) as Row_count from Customer;
+
+
+-- 14. Calculate total loan amount given by bank
+select sum(Amount) as "Total Loan Amount" from Loan;
+
+-- 15. Delete all loans with loan amount between 1300 and 1500.
+-- if you are trying to update values then it is possibility of error 1175 . You can use below command for existing into safe mode
+set sql_safe_updates=0;
+delete from loan where Amount between 1300 and 1500;
+
+-- 16. Delete all tuples at every branch located in Nigdi.
+delete Bname from Branch where Bcity="NIGDI";
+
+use bank;
+
+#assignment -03
+
+
+-- Create the table name as Bank
+create table Branch(BName varchar(20) primary key,BCity varchar(20),Assets integer);
+
+-- Insert the values in Bank table with help of multiline inserting
+insert into Branch(BName, BCity, Assets) VALUES ('AKURDI','NIGDI',150000),
+('CAMP','PUNE',1000000),
+('KHADKI','PUNE',155000),
+('NAVI MUMBAI','MUMBAI',105000),
+('SANTA CRUZ','MUMBAI',105000),
+('STATION','PUNE',155000);
+
+
+
+-- Create the table name as Account
+CREATE TABLE Account(Account_no integer primary key,BName varchar(20),Balance integer, FOREIGN KEY (BName) REFERENCES Branch(BName));
+
+-- Insert the values in Account table with help of multiline inserting
+insert into Account(Account_no, BName, Balance) VALUES (1001,'CAMP',60000),
+(1002,'STATION',100000),
+(1003,'STATION',130000),
+(1004,'KHADKI',10000),
+(2001,'AKURDI',50000),
+(2002,'AKURDI',150000),
+(2003,'AKURDI',12000),
+(2004,'AKURDI',50000),
+(3001,'NAVI MUMBAI',60000),
+(3002,'SANTA CRUZ',16000),
+(3003,'NAVI MUMBAI',10000),
+(3004,'NAVI MUMBAI',12000);
+
+
+
+-- Create the table name as Customer
+create table Customer(CName varchar(20) primary key,CStreet varchar(20), CCity varchar(20));
+
+-- Insert the values in Customer table with help of multiline inserting
+insert into Customer(CName,CStreet,CCity) Values ('ADESH PARDESHI', 'CAMP', 'PUNE'), 
+('ANKITA KAMBLI', 'PIMPRI', 'PIMPRI'), 
+('APOORV SHAH', 'VASAI ROAD', 'MUMBAI'),
+ ('DHIREN JAIN', 'AKURDI', 'NIGDI'), 
+ ('NIDA SHAIKH', 'SANTA CRUZ', 'MUMBAI'), 
+ ('PRIYANKA LOKHANDE', 'BORIWALI(E)', 'MUMBAI'), 
+ ('RIDDHI RUNWAL', 'AKURDI', 'NIGDI'), 
+ ('RIDDHI SANGHVI', 'WAKDEWADI', 'PUNE'), 
+ ('SHARVARI KULKARNI', 'VIMAN-NAGAR', 'PUNE'), 
+ ('SHIKHA JAISWAL', 'ABC CHOWK', 'PUNE'),
+ ('SOHAM BHOJ', 'AKURDI', 'NIGDI'), 
+ ('YOJNA GADIYA', 'BORIWALI(W)', 'MUMBAI');
+ 
+ 
+ -- Create the table name as Depositer
+ create table Depositor
+ (CName varchar(20) primary key,
+ Account_no integer,
+ Foreign key(CName) References Customer(CName),
+ Foreign key(Account_no) References Account(Account_no));
+ 
+ -- Insert the values in Depositer table with help of multiline inserting
+ insert into Depositor(CName,Account_no) Values ('ADESH PARDESHI', 1001), 
+ ('RIDDHI SANGHVI', 1002),
+ ('SHARVARI KULKARNI', 1003),
+ ('SHIKHA JAISWAL', 1004),
+ ('ANKITA KAMBLI', 2001), 
+ ('DHIREN JAIN', 2002), 
+ ('RIDDHI RUNWAL', 2003), 
+ ('SOHAM BHOJ', 2004), 
+ ('APOORV SHAH', 3001),
+ ('NIDA SHAIKH', 3002),
+ ('PRIYANKA LOKHANDE', 3003),
+ ('YOJNA GADIYA', 3004);
+ 
+ -- Create the table name as Loan
+ create table Loan
+ (Loan_no integer primary key,
+ BName varchar(20),
+ Amount integer, 
+ Foreign key(BName) references Branch(BName));
+ 
+  -- Insert the values in Loan table with help of multiline inserting
+ insert into Loan
+ (Loan_no,BName,Amount)
+ Values 
+ (101, 'CAMP', 15000),
+ (102, 'STATION', 100000), 
+ (103, 'KHADKI', 10000), 
+ (201, 'AKURDI', 12000),
+ (202, 'AKURDI', 50000), 
+ (301, 'NAVI MUMBAI', 20000), 
+ (302, 'SANTA CRUZ', 20000),
+ (303, 'SANTA CRUZ', 60000),
+ (304, 'NAVI MUMBAI', 60000);
+ 
+ 
+  -- Create the table name as Borrower
+ create table Borrower
+ (CName varchar(20) primary key,
+ Loan_no integer,
+ Foreign Key(CName) references Customer(CName),
+ Foreign key(Loan_no) References Loan(Loan_no));
+ 
+  -- Insert the values in Borrower table with help of multiline inserting
+ insert into Borrower
+ (CName,Loan_no) 
+ Values
+ ('ADESH PARDESHI', 101), 
+ ('RIDDHI SANGHVI', 102), 
+ ('SHARVARI KULKARNI', 103), 
+ ('ANKITA KAMBLI', 201), 
+ ('RIDDHI RUNWAL', 202),
+ ('APOORV SHAH', 301), 
+ ('NIDA SHAIKH', 302),
+ ('PRIYANKA LOKHANDE', 303), 
+ ('YOJNA GADIYA', 304);
+ 
+/* 1. Create a View1 to display List all customers in alphabetical order who have loan from 
+Pune_Station branch*/
+use Bank;
+drop view view1;
+
+create view view1 as
+select Borrower.CName from Borrower,loan where Borrower.Loan_no=loan.Loan_no
+and Loan.BName='STATION'order by Borrower.CName;
+
+
+
+
+/*2. Create View2 on branch table by selecting any two columns and perform insert
+update delete operations.*/
+create view view2 as 
+select BCity, Assets
+from Branch;
+
+-- Remain
+insert into view2(BCity, Assets)
+values
+('PUNE',50000);
+
+-- done
+set sql_safe_updates=0;
+update view2 set Assets='50000'where Bcity="PUNE";
+
+-- done
+delete from view2 where Assets=2500;
+
+
+ /*Create View3 on borrower and depositor table by selecting any one column from each 
+table perform insert update delete operations.*/
+
+CREATE VIEW View3 AS
+SELECT loan_no
+FROM borrower
+UNION
+SELECT Account_no
+FROM depositor;
+
+-- Remain
+insert into view3(Loan_no,Account_no) values (123,1223) as temp;
+
+
+update view3 set Loan_no='123'where CName='ADESH PARDESHI';
+
+delete from view3 where Loan_no=102;
+
+
+
+/*4]Create Union of left and right joint for all customers who have an account or loan or 
+both at bank*/
+
+select *from loan as L
+left join Account as A
+on L.BName=A.BName
+union
+select *from Account as A
+right join loan as L
+on L.BName=A.BName;
+
+-- 5. Display content of View1,View2,View3 
+
+select *from view1;
+
+select *from view2;
+
+select *from view3;
+
+-- 6. Create Simple and Unique index.
+-- simple index
+create index index1 on Depositor(CName);
+
+-- unique index
+create index index2 on Account(Account_no);
+
+-- 7. Display index Information 
+
+show index from Depositor;
+show index from Account;
+
+-- 8. Truncate table Customer
+-- Note: You cannot trunacate a table referenced in a foreign key constraint
+truncate table Depositor;
+
+
+
+
+
+
+

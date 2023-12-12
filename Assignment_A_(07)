@@ -1,0 +1,41 @@
+/*Write a PL/SQL block of code using parameterized Cursor that will merge the data available in
+the newly created table N_Roll Call with the data available in the table O_RollCall. If the data
+in the first table already exist in the second table then that data should be skipped.*/
+
+select *from oldt;
+
+select *from newt;
+
+set serveroutput on
+
+DECLARE
+
+rollno number;
+flag int(2);
+cursor c_roll(rollno number) is select *from oldt where id not(select id from newt where newt.id=oldt.id);
+info newt%rowtype;
+
+BEGIN 
+rollno:=&rollno;
+flag:=0;
+
+open c_roll(rollno);
+
+loop fetch c_roll into info;
+
+exit when c_roll%notfound;
+
+if(info.id=rollno) then insert into newt values(info.id,info.name);
+flag:=1;
+end if;
+end loop;
+
+if(c_roll%rowcount=0 or flag =0) then 
+dbms_output.put_line('This record already exits in new tab');
+else dbms_output.put_line('Record updated in new table !')
+end if;
+
+close c_roll;
+END;
+
+

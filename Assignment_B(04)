@@ -1,0 +1,63 @@
+/*A. Create Empdb database
+B. Create Employee collection by considering following Fields: 
+i. Empid: Number
+ii. Name: Embedded Doc (FName, LName)
+iii. Company Name: String 
+iv. Salary: Number
+v. Designation: String
+vi. Age: Number
+vii. Expertise: Array 
+viii. DOB: String or Date
+ix. Email id: String
+x. Contact: String 
+xi. Address: Array of Embedded Doc (PAddr, LAddr)*/
+
+
+/*C. Insert at least 10 documents in Employee Collection and execute following statements: */
+
+
+use Empdb
+
+db.Employee.insert({Empid:1,Name:{FName:"Ram",LName:"salve"},Company_Name:"TCS",salary:75000, Designation:"Developer",Age:21,Expertise:"Java Developer",DOB:"10-02-2002",Email_id:"ramsalave@gmail.com",Contact:"9870XXXXXX",Address:{PAddr:"Nagpur",LAdd:"Pune"}})
+
+ db.Employee.insertMany([{Empid:2,Name:{FName:"shyam",LName:"Sharma"},Company_Name:"wipro",salary:100000, Designation:"senior developer",Age:23,Expertise:"Python Developer",DOB:"02-09-2000",Email_id:"shyamsharma@gmail.com",Contact:"7602XXXXXX",Address:{PAddr:"Ahamdengar",LAdd:"Pune"}},{Empid:3,Name:{FName:"Kunal",LName:"Take"},Company_Name:"Infosys",salary:150000, Designation:"junior developer",Age:20,Expertise:"Full Stack Developer",DOB:"02-09-2003",Email_id:"Kunaltake@gmail.com",Contact:"7862XXXXXX",Address:{PAddr:"Shambhajinagar",LAdd:"Pune"}},{Empid:4,Name:{FName:"deepika",LName:"Sharma"},Company_Name:"Infosys",salary:120000, Designation:" junior developer",Age:24,Expertise:['Mongodb','Mysql', 'Cassandra'],DOB:"12-11-1999",Email_id:"deepika@gmail.com",Contact:"9872XXXXXX",Address:{PAddr:"Bid",LAdd:"Banglore"}},{Empid:5,Name:{FName:"Bob",LName:"desoza"},Company_Name:"Persistent",salary:120000, Designation:"Deevloper",Age:27,Expertise:" software Testing",DOB:"12-11-1996",Email_id:"BOb@gmail.com",Contact:"7765XXXXXX",Address:{PAddr:"Bid",LAdd:"Banglore"}},{Empid:6,Name:{FName:"Laxmi",LName:"Rindhe"},Company_Name:"TCS",salary:750000, Designation:"Tester",Age:25,Expertise:" software Testing",DOB:"02-11-2000",Email_id:"Laxmi@gmail.com",Contact:"8765XXXXXX",Address:{PAddr:"Noida",LAdd:"Hydrabad"}},{Empid:7,Name:{FName:"Krishna",LName:"yadav"},Company_Name:"Microsoft",salary:200000, Designation:"Manager",Age:24,Expertise:"Developer",DOB:"27-12-1999",Email_id:"krishna@gmail.com",Contact:"8765XXXXXX",Address:{PAddr:"Ahmedabad",LAdd:"Noida"}},{Empid:8,Name:{FName:"Gaurav",LName:"gawale"},Company_Name:"Accenture",salary:120000, Designation:"Manager",Age:27,Expertise:" software Testing",DOB:"12-11-1996",Email_id:"gaurav@gmail.com",Contact:"7732XXXXXX",Address:{PAddr:"Mumbai",LAdd:"Pune"}},{Empid:9,Name:{FName:"Gita",LName:"Thakur"},Company_Name:"TCS",salary:500000, Designation:"Tester",Age:31,Expertise:" software Testing",DOB:"12-11-1992",Email_id:"Gita@gmail.com",Contact:"7987XXXXXX",Address:{PAddr:"Pune",LAdd:"Noida"}},{Empid:10,Name:{FName:"Durga",LName:"Rane"},Company_Name:"Persistent",salary:220000, Designation:"Tester",Age:26,Expertise:"MongoDB",DOB:"12-11-1993",Email_id:"Durga@gmail.com",Contact:"7243XXXXXX",Address:{PAddr:"Mumbai",LAdd:"Pune"}}])
+
+/*1. Select all documents where the Designation field has the value "Programmer" and the 
+value of the salary field is greater than 30000*/  
+db.Employee.find({"Designation":"Programmer","salary":{$gt:30000}}).pretty()
+
+/*2. Creates a new document if no document in the employee collection contains
+3. {Designation: "Tester", Company_name: "TCS", Age: 25}*/
+db.Employee.update({Designation: "Tester", Company_name: "TCS"},{$set:{age:25}},{upsert:true})
+
+/*4. Selects all documents in the collection where the field age has a value less than 30 or 
+the value of the salary field is greater than 40000.*/
+db.Employee.find({$or:[{age:{$lt:30}},{salary:{$gt:40000}}]})
+
+/*5. Matches all documents where the value of the field Address is an embedded 
+document that contains only the field city with the value "Pune" and the field 
+Pin_code with the value "411001".*/
+db.Employee.find({"Address.PAddr":"Pune","Address.pin_code":411001})
+
+/*6. Finds all documents with Company_name: "TCS" and modifies their salary field by 
+2000.*/
+db.Employee.update({Company_Name:"TCS"},{$set:{salary:20000}},{multi:true})
+
+/*7. Find documents where Designation is not equal to "Developer".*/
+db.Employee.find({Designation:{$ne:"Developer"}}).pretty()
+
+/*8. Find _id, Designation, Address and Name from all documents where Company_name 
+is "Infosys".*/
+db.Employee.find({Company_Name:"Infosys"},{Empid:1,Designation:1,Address:1,Name:1}).pretty()
+
+/*9. Selects all documents in the employee collection where the value of the Designation 
+is either "Developer" or "Tester".*/
+db.Employee.find({$or:[{Designation:"Developer"},{Designation:"Tester"}]})
+
+/*10. Find all document with Exact Match on an Array having Expertise: 
+['Mongodb','Mysql', 'Cassandra']*/
+ db.Employee.find({Expertise:['Mongodb','Mysql', 'Cassandra']})
+
+/*11. Drop Single documents where designation="Developer"*/
+db.Employee.remove({Designation:"Developer"},1)
+

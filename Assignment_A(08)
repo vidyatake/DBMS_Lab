@@ -1,0 +1,44 @@
+--Name: Vidya Sunil Take
+--College: MESWCOE pune
+
+/*Write a database trigger on Library table. The System should keep track of the records that are
+being updated or deleted. The old value of updated or deleted records should be added in
+Library_Audit table.*/
+
+create table library_table( 
+     Roll_no number, 
+     Bookname varchar(20), 
+     Dateof_issue Date, 
+     Status varchar(20) 
+);
+
+insert into library_table values(1,'harry potter',to_date('01-11-2023','DD-MM-YYYY'),'pending');
+
+insert into library_table values(21,'Rich dad poor dad',to_date('17-09-2022','DD-MM-YYYY'),'Returned');
+insert into library_table values(63,'Shrimantayogi',to_date('05-07-2023','DD-MM-YYYY'),'pending');
+insert into library_table values(40,'Chava',to_date('26-12-2022','DD-MM-YYYY'),'Returned');
+insert into library_table values(22,'The leader in you',to_date('13-04-2023','DD-MM-YYYY'),'Returned');
+
+create table library_audit( 
+      Rollno number, 
+      Bookname varchar(20), 
+      Dateof_issue Date, 
+      Status varchar(20) 
+ );
+
+create or replace trigger mytrigger 
+before update or delete 
+on library_table 
+for each row 
+ begin 
+ insert into library_audit values(:old.Roll_no,:old.Bookname,:old.Dateof_issue,:old.Status); 
+ end;
+
+select *from library_table;
+
+begin 
+update library_table set Roll_no=31where Bookname='chava'; 
+end;
+
+select *from library_audit;
+
